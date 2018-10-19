@@ -1,60 +1,46 @@
-// const express = require ('express');
-// const app = express();
+const APIKEY = "ccf4d9f34a36ec721752efb1b124ca4b";
+let baseURL = "https://api.themoviedb.org/3/";
+let configData = null;
+let baseImageURL = null;
 
-// app.get("/", function(req, res){
-//     res.send("Hello world!");
-// })
+let getConfig = function(){
+    let url = "".concat(baseURL, "configuration?api_key=", APIKEY);
+    fetch(url)
+        .then((result) => {
+            return result.json();
+        })
+        .then((data) => {
+            baseImageURL = data.images.secre_base_url;
+            configData = data.images;
+            console.log("Config >> ");
+            console.log(data);
+            runSearch("jaws");
+        })
+        .catch((err) => {
+            console.error(err);
+        })
+}
 
-// app.listen(3000, function(){
-//     console.log("Exempla app listenning port 3000");
-// })
+let runSearch = function(keyword){
+    let url = "".concat(baseURL, "search/movie?api_key=", APIKEY, "&query=", keyword);
+    fetch(url)
+        .then((result) => {
+            return result.json();
+        })
+        .then((data) => {
+            console.log(data);
+            displayData(data);  
+        })
+}
 
-
-// var titres = document.querySelectorAll("h1");
-// titres.appendChild("oucocu");
-// console.log(body);
-
-// $.ajax({
-//     url: 'https://randomuser.me/api/',
-//     dataType: 'json',
-//     success: function(data) {
-//       console.log(data.results[0].picture.medium);
-//       $(".affiche").attr("src", data.results[0].picture.large);
-//     }
-//   });
-
-// $.ajax({
-//     url: "https://www.themoviedb.org/discover/movie?sort_by=popularity.desc",
-//     dataType: 'json',
-//     success: function(data) {
-//       console.log(data);
-//     }
-//   });
-
-// $(".affiche").attr("src", "")
-// $("h1").html("wesh!");
-
-
-// var settings = {
-//     "async": true,
-//     "crossDomain": true,
-//     "url": "https://api.themoviedb.org/3/authentication/token/new?api_key=%3C%3Capi_key%3E%3E",
-//     "method": "GET",
-//     "headers": {},
-//     "data": "{}"
-//   }
-  
-// $.ajax(settings).done(function (response) {
-//     console.log(response);
-// });
-
-$.ajax({
-    url: "https://api.themoviedb.org/3/movie/550?api_key=ccf4d9f34a36ec721752efb1b124ca4b",
-    dataType: 'json',
-    success: function(data) {
-      console.log(data);
-      $(".titre").html(data.original_title);
-      $(".overview").html(data.overview)
-      $(".affiche").attr("src", "https://image.tmdb.org/t/p/w500" + data.poster_path)
+let displayData = function(data){
+    $(".result").append("<table class='table'><thead><tr><th scope='col'>Poster</th><th scope='col'>Title</th><th scope='col'>Overview</th><th scope='col'>Release Date</th><th scope='col'>Download</th></tr></thead><tbody></table>");
+    for(let i = 0; i<data.results.length; i++){
+        let year_released = data.results[i].release_date.substring(0,4);
+        let download_link = "https://thepiratebay3.org/index.php?q=" + data.results[i].title + "+"+ year_released;
+        let poster_img = `<img class="poster" alt="${data.results[i].poster_path ? data.results[i].title + " poster" : "No Poster avaliable"}" src="${data.results[i].poster_path ? "https://image.tmdb.org/t/p/w500" + data.results[i].poster_path : ''}">`;
+        $(".table").append("<tr><td scope='row'>"+ poster_img +"</td><td>"+ data.results[i].title +"</td><td>"+ data.results[i].overview +"</td><td>"+ year_released +"</td><td><a target='_blank' href='"+ download_link +"'>Download</a></td></tr>");
     }
-  });
+}
+
+document.addEventListener('DOMContentLoaded', getConfig);
