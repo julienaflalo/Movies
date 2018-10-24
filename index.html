@@ -8,7 +8,18 @@
 </head>
 <body>
     <h1 class="title">The Movie DB API </h1>
-    <div class="result container"></div>
+    <div class="container">
+        <form id="search-form">
+            <div class="input-group mb-3">
+                <input id="txt-input" type="text" class="form-control" placeholder="Search for a movie">
+                <div class="input-group-append">
+                    <button id="search-button" class="btn btn-outline-secondary" type="button">Search</button>
+                </div>
+            </div>    
+        </form>
+        <div class="result">
+        </div>
+    </div>
 </body>
 <script src="node_modules/jquery/dist/jquery.min.js"></script>
 <script src="index.js"></script>

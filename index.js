@@ -14,7 +14,6 @@ let getConfig = function(){
             configData = data.images;
             console.log("Config >> ");
             console.log(data);
-            runSearch("jaws");
         })
         .catch((err) => {
             console.error(err);
@@ -23,18 +22,18 @@ let getConfig = function(){
 
 let runSearch = function(keyword){
     let url = "".concat(baseURL, "search/movie?api_key=", APIKEY, "&query=", keyword);
-    fetch(url)
+    let promise = fetch(url)
         .then((result) => {
             return result.json();
         })
         .then((data) => {
             console.log(data);
             displayData(data);  
-        })
+        });
 }
 
 let displayData = function(data){
-    $(".result").append("<table class='table'><thead><tr><th scope='col'>Poster</th><th scope='col'>Title</th><th scope='col'>Overview</th><th scope='col'>Release Date</th><th scope='col'>Download</th></tr></thead><tbody></table>");
+    $(".result").html("<table class='table'><thead><tr><th scope='col'>Poster</th><th scope='col'>Title</th><th scope='col'>Overview</th><th scope='col'>Release Date</th><th scope='col'>Download</th></tr></thead><tbody></table>");
     for(let i = 0; i<data.results.length; i++){
         let year_released = data.results[i].release_date.substring(0,4);
         let download_link = "https://thepiratebay3.org/index.php?q=" + data.results[i].title + "+"+ year_released;
@@ -43,4 +42,8 @@ let displayData = function(data){
     }
 }
 
-document.addEventListener('DOMContentLoaded', getConfig);
+
+$("#search-button").click(function(){
+    console.log($("#txt-input").val());
+    runSearch($("#txt-input").val());
+});
